@@ -185,3 +185,15 @@ def test_live_empty() -> None:
     print(repr(result))
     assert "\n" not in result
     assert result == "\x1b[?25l\r\x1b[2K\x1b[?25h\r"
+
+
+def test_print_markup_false_does_not_disable_live_markup() -> None:
+    """Regression test for https://github.com/Textualize/rich/issues/3751"""
+    console = create_capture_console()
+    console.begin_capture()
+    with Live("[green]live display", console=console, auto_refresh=False):
+        console.print("[red]plain text", markup=False)
+    output = console.end_capture()
+    assert "[red]plain text" in output
+    assert "[green]" not in output
+    assert "live display" in output

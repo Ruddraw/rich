@@ -87,6 +87,10 @@ class LiveRender:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         renderable = self.renderable
+        # Options set by an unrelated console.print call (e.g. markup=False) should not leak into the live display
+        options = options.update(
+            justify=None, overflow=None, no_wrap=False, highlight=None, markup=None
+        )
         style = console.get_style(self.style)
         lines = console.render_lines(renderable, options, style=style, pad=False)
         shape = Segment.get_shape(lines)
